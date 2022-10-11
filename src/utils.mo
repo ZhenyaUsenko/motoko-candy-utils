@@ -1,7 +1,7 @@
 import Prim "mo:prim";
 
 module {
-  let { Array_tabulate = tabulateArray;  Array_init = initArray } = Prim;
+  let { Array_tabulate = tabulateArray; Array_init = initArray } = Prim;
 
   let { nat32ToNat; natToNat32; charToNat32; charIsUppercase; charToLower } = Prim;
 

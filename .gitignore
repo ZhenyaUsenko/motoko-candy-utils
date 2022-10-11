@@ -1,2 +1,5 @@
 .vscode/
 .vessel/
+.dfx/
+main.mo
+dfx.json

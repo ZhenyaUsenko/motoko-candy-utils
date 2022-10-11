@@ -113,25 +113,37 @@ module {
       case (#Array(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
 
-        for (item in array.vals()) if (checkCondition(root, candy, condition)) return item;
+        for (item in array.vals()) if (checkCondition(root, item, condition)) return item;
       };
 
       case (#Bytes(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
 
-        for (item in array.vals()) if (checkCondition(root, candy, condition)) return #Nat8(item);
+        for (item in array.vals()) {
+          let nat8 = #Nat8(item);
+
+          if (checkCondition(root, nat8, condition)) return nat8;
+        };
       };
 
       case (#Floats(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
 
-        for (item in array.vals()) if (checkCondition(root, candy, condition)) return #Float(item);
+        for (item in array.vals()) {
+          let float = #Float(item);
+
+          if (checkCondition(root, float, condition)) return float;
+        };
       };
 
       case (#Nats(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
 
-        for (item in array.vals()) if (checkCondition(root, candy, condition)) return #Nat(item);
+        for (item in array.vals()) {
+          let nat = #Nat(item);
+
+          if (checkCondition(root, nat, condition)) return nat;
+        };
       };
 
       case (_) return #Empty;
