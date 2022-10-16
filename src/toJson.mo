@@ -8,14 +8,31 @@ import Prim "mo:prim";
 import Principal "mo:base/Principal";
 
 module {
-  let { blobToArray; charToText } = Prim;
+  let { nat32ToChar; charToNat32; charToText } = Prim;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func textReplace(text: Text, search: Char, replacer: Text): Text {
+  public func escapeJson(text: Text): Text {
     var result = "";
 
-    for (char in text.chars()) if (char == search) result #= replacer else result #= charToText(char);
+    for (char in text.chars()) {
+      if (char == '\"') {
+        result #= "\\\"";
+      } else if (char == '\\') {
+        result #= "\\\\";
+      } else if (char == '\t') {
+        result #= "\\t";
+      } else if (char == '\n') {
+        result #= "\\n";
+      } else if (char < ' ') {
+        let char32 = charToNat32(char);
+        let charOffset: Nat32 = if (char32 < 10) 48 else if (char32 < 16) 87 else if (char32 < 26) 32 else 71;
+
+        result #= (if (char32 < 16) "\\u000" else "\\u001") # charToText(nat32ToChar(char32 +% charOffset));
+      } else {
+        result #= charToText(char);
+      };
+    };
 
     return result;
   };
@@ -25,9 +42,8 @@ module {
   public func candyToJson(candy: Candy.CandyValue): Text {
     return switch(candy) {
       case (#Empty) "null";
-      case (#Text(value)) "\"" # textReplace(value, '\"', "\\\"") # "\"";
-      case (#Principal(value)) candyToJson(#Text(Principal.toText(value)));
-      case (#Blob(value)) candyToJson(#Bytes(#thawed(blobToArray(value))));
+      case (#Text(value)) "\"" # escapeJson(value) # "\"";
+      case (#Principal(value)) "\"" # Principal.toText(value) # "\"";
       case (#Bool(value)) Bool.toText(value);
       case (#Int(value)) Int.toText(value);
       case (#Int8(value)) Int.toText(Prim.int8ToInt(value));
@@ -43,37 +59,85 @@ module {
       case (#Option(value)) switch (value) { case (?value) candyToJson(value); case (_) "null" };
 
       case (#Class(value)) {
-        let props = Array.map<Candy.Property, Text>(value, func(item) { candyToJson(#Text(item.name)) # ":" # candyToJson(item.value) });
+        var json = "{";
+        var firstProp = true;
 
-        "{" # Text.join(",", props.vals()) # "}";
+        for (prop in value.vals()) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "\"" # escapeJson(prop.name) # "\":" # candyToJson(prop.value);
+        };
+
+        json # "}";
       };
 
       case (#Array(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
-        let items = Array.map<Candy.CandyValue, Text>(array, func(item) { candyToJson(item) });
+        var json = "[";
+        var firstItem = true;
 
-        "[" # Text.join(",", items.vals()) # "]";
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= candyToJson(item);
+        };
+
+        json # "]";
       };
 
       case (#Bytes(value)) {
-        let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
-        let items = Array.map<Nat8, Text>(array, func(item) { candyToJson(#Nat8(item)) });
+         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
+        var json = "[";
+        var firstItem = true;
 
-        "[" # Text.join(",", items.vals()) # "]";
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(Prim.nat8ToNat(item));
+        };
+
+        json # "]";
       };
 
       case (#Floats(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
-        let items = Array.map<Float, Text>(array, func(item) { candyToJson(#Float(item)) });
+        var json = "[";
+        var firstItem = true;
 
-        "[" # Text.join(",", items.vals()) # "]";
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Float.toText(item);
+        };
+
+        json # "]";
       };
 
       case (#Nats(value)) {
         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
-        let items = Array.map<Nat, Text>(array, func(item) { candyToJson(#Nat(item)) });
+        var json = "[";
+        var firstItem = true;
 
-        "[" # Text.join(",", items.vals()) # "]";
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(item);
+        };
+
+        json # "]";
+      };
+
+      case (#Blob(value)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in value.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(Prim.nat8ToNat(item));
+        };
+
+        json # "]";
       };
     };
   };
