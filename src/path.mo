@@ -109,9 +109,9 @@ module {
         let prop = if (pathType == PATH_ALL) {
           if (propNameSize == 1) #ALL else trap("Wrong (*) usage");
         } else if (pathType == PATH_ROOT) {
-          if (firstProp and propNameSize == 1) #ALL else trap("Wrong ($) usage");
+          if (firstProp and propNameSize == 1) #ROOT else trap("Wrong ($) usage");
         } else if (pathType == PATH_CURRENT) {
-          if (firstProp and propNameSize == 1) #ALL else trap("Wrong (@) usage");
+          if (firstProp and propNameSize == 1) #CURRENT else trap("Wrong (@) usage");
         } else {
           #PROP(propName, propInt * intSign, intValid and propNameSize > 0 and (intSign == 1 or propNameSize > 1));
         };
