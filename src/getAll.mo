@@ -250,10 +250,14 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func getAll(candy: Candy.CandyValue, path: Path.Path): [Candy.CandyValue] {
-    return switch (path.0) {
-      case (#CONDITION(condition)) [#Bool(Get.checkCondition(candy, candy, condition))];
-      case (_) pathGet(candy, candy, path);
+  public func getAll(candy: Candy.CandyValue, path: ?Path.Path): [Candy.CandyValue] {
+    return switch (path) {
+      case (?path) switch (path.0) {
+        case (#CONDITION(condition)) [#Bool(Get.checkCondition(candy, candy, condition))];
+        case (_) pathGet(candy, candy, path);
+      };
+
+      case (_) [];
     };
   };
 };

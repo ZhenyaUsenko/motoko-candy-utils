@@ -325,7 +325,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func path(text: Text): Path {
-    return processCondition((text # "]").chars(), true, NO_CHAIN);
+  public func path(text: Text): ?Path {
+    return ?processCondition((text # "]").chars(), true, NO_CHAIN);
   };
 };
