@@ -1,15 +1,11 @@
 import Candy "mo:candy/types";
+import Path "./path";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
-import Path "./path";
-import Utils "./utils";
+import { contains; containsLower } "./utils";
 
 module {
-  let { contains; containsLower; searchUtils; lowerSearchUtils } = Utils;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  public func equal(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func equal(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value == target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) == target.0;
@@ -28,14 +24,13 @@ module {
       case (#Float(value)) target.7 and value == target.6;
       case (#Option(?value)) equal(value, target);
       case (#Option(null)) target.11 == Path.NULL_VALUE;
-      case (#Empty) target.11 == Path.EMPTY_VALUE;
       case (_) false;
     };
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greaterOrLess(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func greaterOrLess(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value != target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) != target.0;
@@ -59,7 +54,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greater(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func greater(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value > target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) > target.0;
@@ -83,7 +78,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greaterOrEqual(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func greaterOrEqual(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value >= target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) >= target.0;
@@ -107,7 +102,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func less(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func less(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value < target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) < target.0;
@@ -131,7 +126,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func lessOrEqual(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func lessOrEqual(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) target.11 == Path.EXISTING_VALUE and value <= target.0;
       case (#Principal(value)) target.11 == Path.EXISTING_VALUE and Principal.toText(value) <= target.0;
@@ -155,7 +150,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func like(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func like(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) contains(value, target.8);
       case (#Option(?value)) like(value, target);
@@ -165,7 +160,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func ilike(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func ilike(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) containsLower(value, target.9);
       case (#Option(?value)) ilike(value, target);
@@ -175,9 +170,9 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func unlike(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func unlike(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
-      case (#Text(value)) not contains(value, target.9);
+      case (#Text(value)) not contains(value, target.8);
       case (#Option(?value)) unlike(value, target);
       case (_) false;
     };
@@ -185,7 +180,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func iunlike(value: Candy.CandyValue, target: Path.Value): Bool {
+  public func iunlike(value: Candy.Candy, target: Path.Value): Bool {
     return switch (value) {
       case (#Text(value)) not containsLower(value, target.9);
       case (#Option(?value)) iunlike(value, target);
@@ -195,7 +190,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func compare(value: Candy.CandyValue, operator: Path.Operator, target: Path.Value): Bool {
+  public func compare(value: Candy.Candy, operator: Path.Operator, target: Path.Value): Bool {
     switch (operator) {
       case (#EQ) return equal(value, target);
       case (#NE) return not equal(value, target);

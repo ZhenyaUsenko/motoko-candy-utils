@@ -1,12 +1,7 @@
-import Prim "mo:prim";
+import Array "mo:base/Array";
+import { nat32ToNat; natToNat32; charToNat32; charIsUppercase; charToLower } "mo:prim";
 
 module {
-  let { Array_tabulate = tabulateArray; Array_init = initArray } = Prim;
-
-  let { nat32ToNat; natToNat32; charToNat32; charIsUppercase; charToLower } = Prim;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   public type SearchUtils = (
     chars: [Char],
     size: Nat32,
@@ -34,8 +29,13 @@ module {
     let size = text.size();
     var sum = 0:Nat32;
 
-    let chars = tabulateArray<Char>(size, func(_) = switch (nextChar()) {
-      case (?char) { sum +%= charToNat32(char); char };
+    let chars = Array.tabulate<Char>(size, func(_) = switch (nextChar()) {
+      case (?char) {
+        sum +%= charToNat32(char);
+
+        char;
+      };
+
       case (_) '0';
     });
 
@@ -49,8 +49,13 @@ module {
     let size = text.size();
     var sum = 0:Nat32;
 
-    let chars = tabulateArray<Char>(size, func(_) = switch (nextChar()) {
-      case (?char) { sum +%= charToNat32(char); if (charIsUppercase(char)) charToLower(char) else char };
+    let chars = Array.tabulate<Char>(size, func(_) = switch (nextChar()) {
+      case (?char) {
+        sum +%= charToNat32(char);
+
+        if (charIsUppercase(char)) charToLower(char) else char;
+      };
+
       case (_) '0';
     });
 
@@ -62,7 +67,7 @@ module {
   public func contains(text: Text, searchUtils: SearchUtils): Bool {
     if (searchUtils.1 == 0) return true;
 
-    let chars = initArray<Char>(nat32ToNat(searchUtils.1), '0');
+    let chars = Array.init<Char>(nat32ToNat(searchUtils.1), '0');
     let lastSearchIndex = searchUtils.1 -% 1;
     let frontIter = text.chars();
     let backIterNext = text.chars().next;
@@ -110,7 +115,7 @@ module {
   public func containsLower(text: Text, searchUtils: SearchUtils): Bool {
     if (searchUtils.1 == 0) return true;
 
-    let chars = initArray<Char>(nat32ToNat(searchUtils.1), '0');
+    let chars = Array.init<Char>(nat32ToNat(searchUtils.1), '0');
     let lastSearchIndex = searchUtils.1 -% 1;
     let frontIter = text.chars();
     let backIterNext = text.chars().next;

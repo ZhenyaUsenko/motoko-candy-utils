@@ -2,14 +2,10 @@ import Candy "mo:candy/types";
 import Iter "mo:base/Iter";
 import Prim "mo:prim";
 import Utils "./utils";
+import { searchUtils; lowerSearchUtils } "./utils";
+import { nat32ToNat; charToNat32; charToText; intToFloat; encodeUtf8; trap } "mo:prim";
 
 module {
-  let { nat32ToNat; charToNat32; charToText; intToFloat; encodeUtf8; trap } = Prim;
-
-  let { searchUtils; lowerSearchUtils } = Utils;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   public type Prop = (
     propName: Text,
     propInt: Int,
@@ -59,7 +55,6 @@ module {
 
   public let EXISTING_VALUE = 0:Nat8;
   public let NULL_VALUE = 1:Nat8;
-  public let EMPTY_VALUE = 2:Nat8;
 
   public let NO_CHAIN = 0:Nat8;
   public let AND_CHAIN = 1:Nat8;
@@ -215,7 +210,7 @@ module {
           var and1 = null:?Condition;
           var or1 = null:?Condition;
 
-          if (valueType == NULL_VALUE and valueSize > 1 or valueType == EMPTY_VALUE and valueSize > 2) trap("Wrong (?) usage");
+          if (valueType == NULL_VALUE and valueSize > 1) trap("Wrong (?) usage");
 
           if (char == '$' or char == '@') {
             let nextProp = if (char == '$') processPath(iter, false, PATH_ROOT) else processPath(iter, false, PATH_CURRENT);
@@ -288,7 +283,7 @@ module {
           value #= charToText(char);
           valueSize +%= 1;
 
-          if (char == '?') if (valueType == NULL_VALUE) valueType := EMPTY_VALUE else valueType := NULL_VALUE;
+          if (char == '?') valueType := NULL_VALUE;
 
           if (intValid) {
             if (valueSize == 1 and char == '-') {

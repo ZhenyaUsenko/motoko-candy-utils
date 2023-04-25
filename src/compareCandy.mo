@@ -1,15 +1,11 @@
 import Candy "mo:candy/types";
+import Path "./path";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
-import Path "./path";
-import Utils "./utils";
+import { contains; containsLower; searchUtils; lowerSearchUtils } "./utils";
 
 module {
-  let { contains; containsLower; searchUtils; lowerSearchUtils } = Utils;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  public func equal(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func equal(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value == target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value == target; case (_) false };
@@ -28,14 +24,13 @@ module {
       case (#Float(value)) switch (target) { case (#Float(target)) value == target; case (_) false };
       case (#Option(?value)) switch (target) { case (#Option(?target)) equal(value, target); case (_) false };
       case (#Option(null)) switch (target) { case (#Option(null)) true; case (_) false };
-      case (#Empty) switch (target) { case (#Empty) true; case (_) false };
       case (_) false;
     };
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greaterOrLess(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func greaterOrLess(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value != target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value != target; case (_) false };
@@ -59,7 +54,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greater(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func greater(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value > target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value > target; case (_) false };
@@ -83,7 +78,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func greaterOrEqual(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func greaterOrEqual(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value >= target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value >= target; case (_) false };
@@ -107,7 +102,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func less(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func less(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value < target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value < target; case (_) false };
@@ -131,7 +126,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func lessOrEqual(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func lessOrEqual(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) value <= target; case (_) false };
       case (#Principal(value)) switch (target) { case (#Principal(target)) value <= target; case (_) false };
@@ -155,7 +150,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func like(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func like(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) contains(value, searchUtils(target)); case (_) false };
       case (#Option(?value)) switch (target) { case (#Option(?target)) like(value, target); case (_) false };
@@ -165,9 +160,9 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func ilike(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func ilike(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
-      case (#Text(value)) switch (target) { case (#Text(target)) containsLower(value, searchUtils(target)); case (_) false };
+      case (#Text(value)) switch (target) { case (#Text(target)) containsLower(value, lowerSearchUtils(target)); case (_) false };
       case (#Option(?value)) switch (target) { case (#Option(?target)) ilike(value, target); case (_) false };
       case (_) false;
     };
@@ -175,7 +170,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func unlike(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func unlike(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
       case (#Text(value)) switch (target) { case (#Text(target)) not contains(value, searchUtils(target)); case (_) false };
       case (#Option(?value)) switch (target) { case (#Option(?target)) unlike(value, target); case (_) false };
@@ -185,9 +180,9 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func iunlike(value: Candy.CandyValue, target: Candy.CandyValue): Bool {
+  public func iunlike(value: Candy.Candy, target: Candy.Candy): Bool {
     return switch (value) {
-      case (#Text(value)) switch (target) { case (#Text(target)) not containsLower(value, searchUtils(target)); case (_) false };
+      case (#Text(value)) switch (target) { case (#Text(target)) not containsLower(value, lowerSearchUtils(target)); case (_) false };
       case (#Option(?value)) switch (target) { case (#Option(?target)) iunlike(value, target); case (_) false };
       case (_) false;
     };
@@ -195,7 +190,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func compare(value: Candy.CandyValue, operator: Path.Operator, target: Candy.CandyValue): Bool {
+  public func compare(value: Candy.Candy, operator: Path.Operator, target: Candy.Candy): Bool {
     switch (operator) {
       case (#EQ) return equal(value, target);
       case (#NE) return not equal(value, target);

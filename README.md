@@ -6,7 +6,7 @@
 | :------------------------ | :------------------------------------------------------------------------- |
 | `" == "`                  | equal                                                                      |
 | `" != "`                  | not equal                                                                  |
-| `" <> "`                  | not equal (returns false for mismatched type comparisons, #Empty and null) |
+| `" <> "`                  | not equal (returns false for mismatched type comparisons and null)         |
 | `" > "`                   | greater                                                                    |
 | `" >= "`                  | greater or equal                                                           |
 | `" < "`                   | less                                                                       |
@@ -33,7 +33,6 @@
 | `$`                       | reference root candy                                                       |
 | `*`                       | get all array items                                                        |
 | `?`                       | null value                                                                 |
-| `??`                      | #Empty value                                                               |
 
 ## Examples
 
@@ -42,7 +41,7 @@ import Utils "mo:candy_utils/CandyUtils";
 
 let { get; getAll; path } = Utils;
 
-let candy = #Empty; // our big candy structure here with nested arrays and objects
+let candy = #Option(null); // our big candy structure here with nested arrays and objects
 
 let candy1 = get(candy, path("books.0.author.name"));
 

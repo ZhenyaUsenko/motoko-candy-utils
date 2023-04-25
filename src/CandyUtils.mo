@@ -1,6 +1,6 @@
-import Path "./path";
 import Get "./get";
 import GetAll "./getAll";
+import Path "./path";
 import ToJson "./toJson";
 import ToText "./toText";
 

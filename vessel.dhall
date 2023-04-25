@@ -1,4 +1,9 @@
 {
-  dependencies = ["base", "candy"],
-  compiler = None Text,
+  dependencies = [
+    "base",
+    "candy",
+    "stablebuffer",
+    "map",
+  ],
+  compiler = Some "0.8.6",
 }

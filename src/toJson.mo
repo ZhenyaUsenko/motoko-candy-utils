@@ -1,17 +1,16 @@
 import Array "mo:base/Array";
-import Candy "mo:candy/types";
-import Text "mo:base/Text";
-import Int "mo:base/Int";
-import Float "mo:base/Float";
 import Bool "mo:base/Bool";
+import Buffer "mo:stablebuffer/StableBuffer";
+import Candy "mo:candy/types";
+import Float "mo:base/Float";
+import Int "mo:base/Int";
+import Map "mo:map/Map";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
+import Set "mo:map/Set";
+import Text "mo:base/Text";
 
 module {
-  let { nat32ToChar; charToNat32; charToText } = Prim;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   public func escapeJson(text: Text): Text {
     var result = "";
 
@@ -25,12 +24,12 @@ module {
       } else if (char == '\n') {
         result #= "\\n";
       } else if (char < ' ') {
-        let char32 = charToNat32(char);
+        let char32 = Prim.charToNat32(char);
         let charOffset: Nat32 = if (char32 < 10) 48 else if (char32 < 16) 87 else if (char32 < 26) 32 else 71;
 
-        result #= (if (char32 < 16) "\\u000" else "\\u001") # charToText(nat32ToChar(char32 +% charOffset));
+        result #= (if (char32 < 16) "\\u000" else "\\u001") # Prim.charToText(Prim.nat32ToChar(char32 +% charOffset));
       } else {
-        result #= charToText(char);
+        result #= Prim.charToText(char);
       };
     };
 
@@ -39,9 +38,8 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func candyToJson(candy: Candy.CandyValue): Text {
+  public func candyToJson(candy: Candy.Candy): Text {
     return switch(candy) {
-      case (#Empty) "null";
       case (#Text(value)) "\"" # escapeJson(value) # "\"";
       case (#Principal(value)) "\"" # Principal.toText(value) # "\"";
       case (#Bool(value)) Bool.toText(value);
@@ -58,11 +56,11 @@ module {
       case (#Float(value)) Float.toText(value);
       case (#Option(value)) switch (value) { case (?value) candyToJson(value); case (_) "null" };
 
-      case (#Class(value)) {
+      case (#Class(data)) {
         var json = "{";
         var firstProp = true;
 
-        for (prop in value.vals()) {
+        for (prop in Map.vals(data)) {
           if (firstProp) firstProp := false else json #= ",";
 
           json #= "\"" # escapeJson(prop.name) # "\":" # candyToJson(prop.value);
@@ -71,12 +69,37 @@ module {
         json # "}";
       };
 
-      case (#Array(value)) {
-        let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
+      case (#Map(data)) {
+        var json = "[";
+        var firstProp = true;
+
+        for (item in Map.entries(data)) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "[" # candyToJson(item.0) # "," # candyToJson(item.1) # "]";
+        };
+
+        json # "]";
+      };
+
+      case (#Set(data)) {
+        var json = "[";
+        var firstProp = true;
+
+        for (item in Set.keys(data)) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= candyToJson(item);
+        };
+
+        json # "]";
+      };
+
+      case (#Array(array)) {
         var json = "[";
         var firstItem = true;
 
-        for (item in array.vals()) {
+        for (item in Buffer.vals(array)) {
           if (firstItem) firstItem := false else json #= ",";
 
           json #= candyToJson(item);
@@ -85,12 +108,11 @@ module {
         json # "]";
       };
 
-      case (#Bytes(value)) {
-         let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
+      case (#Bytes(array)) {
         var json = "[";
         var firstItem = true;
 
-        for (item in array.vals()) {
+        for (item in Buffer.vals(array)) {
           if (firstItem) firstItem := false else json #= ",";
 
           json #= Int.toText(Prim.nat8ToNat(item));
@@ -99,12 +121,11 @@ module {
         json # "]";
       };
 
-      case (#Floats(value)) {
-        let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
+      case (#Floats(array)) {
         var json = "[";
         var firstItem = true;
 
-        for (item in array.vals()) {
+        for (item in Buffer.vals(array)) {
           if (firstItem) firstItem := false else json #= ",";
 
           json #= Float.toText(item);
@@ -113,12 +134,24 @@ module {
         json # "]";
       };
 
-      case (#Nats(value)) {
-        let array = switch (value) { case (#frozen(value)) value; case (#thawed(value)) value };
+      case (#Ints(array)) {
         var json = "[";
         var firstItem = true;
 
-        for (item in array.vals()) {
+        for (item in Buffer.vals(array)) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(item);
+        };
+
+        json # "]";
+      };
+
+      case (#Nats(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in Buffer.vals(array)) {
           if (firstItem) firstItem := false else json #= ",";
 
           json #= Int.toText(item);

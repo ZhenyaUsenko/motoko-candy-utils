@@ -6,7 +6,7 @@ import Prim "mo:prim";
 import Principal "mo:base/Principal";
 
 module {
-  public func candyToText(candy: Candy.CandyValue): ?Text {
+  public func candyToText(candy: Candy.Candy): ?Text {
     return switch(candy) {
       case (#Text(value)) ?value;
       case (#Principal(value)) ?Principal.toText(value);
