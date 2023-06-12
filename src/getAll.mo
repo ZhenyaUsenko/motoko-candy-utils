@@ -1,6 +1,6 @@
 import Array "mo:base/Array";
 import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy/types";
+import Candy "mo:candy2/types";
 import Get "./get";
 import Map "mo:map/Map";
 import Path "./path";

@@ -1,4 +1,4 @@
-import Candy "mo:candy/types";
+import Candy "mo:candy2/types";
 import Path "./path";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";

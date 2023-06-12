@@ -1,9 +1,9 @@
 {
   dependencies = [
     "base",
-    "candy",
+    "candy2",
     "stablebuffer",
     "map",
   ],
-  compiler = Some "0.8.6",
+  compiler = Some "0.9.1",
 }

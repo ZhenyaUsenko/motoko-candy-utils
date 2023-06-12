@@ -1,6 +1,3 @@
 .dfx/
 .vessel/
 .vscode/
-build.sh
-dfx.json
-main.mo

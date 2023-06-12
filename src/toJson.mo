@@ -1,7 +1,7 @@
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
 import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy/types";
+import Candy "mo:candy2/types";
 import Float "mo:base/Float";
 import Int "mo:base/Int";
 import Map "mo:map/Map";
@@ -56,43 +56,43 @@ module {
       case (#Float(value)) Float.toText(value);
       case (#Option(value)) switch (value) { case (?value) candyToJson(value); case (_) "null" };
 
-      case (#Class(data)) {
+      case (#Class(props)) {
         var json = "{";
         var firstProp = true;
 
-        for (prop in Map.vals(data)) {
+        for (prop in Map.vals(props)) {
           if (firstProp) firstProp := false else json #= ",";
 
           json #= "\"" # escapeJson(prop.name) # "\":" # candyToJson(prop.value);
         };
 
-        json # "}";
+        return json # "}";
       };
 
-      case (#Map(data)) {
+      case (#Map(map)) {
         var json = "[";
         var firstProp = true;
 
-        for (item in Map.entries(data)) {
+        for ((key, value) in Map.entries(map)) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= "[" # candyToJson(item.0) # "," # candyToJson(item.1) # "]";
+          json #= "[" # candyToJson(key) # "," # candyToJson(value) # "]";
         };
 
-        json # "]";
+        return json # "]";
       };
 
-      case (#Set(data)) {
+      case (#Set(set)) {
         var json = "[";
         var firstProp = true;
 
-        for (item in Set.keys(data)) {
+        for (key in Set.keys(set)) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= candyToJson(item);
+          json #= candyToJson(key);
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Array(array)) {
@@ -105,7 +105,7 @@ module {
           json #= candyToJson(item);
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Bytes(array)) {
@@ -118,7 +118,7 @@ module {
           json #= Int.toText(Prim.nat8ToNat(item));
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Floats(array)) {
@@ -131,7 +131,7 @@ module {
           json #= Float.toText(item);
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Ints(array)) {
@@ -144,7 +144,7 @@ module {
           json #= Int.toText(item);
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Nats(array)) {
@@ -157,7 +157,7 @@ module {
           json #= Int.toText(item);
         };
 
-        json # "]";
+        return json # "]";
       };
 
       case (#Blob(value)) {
@@ -170,7 +170,146 @@ module {
           json #= Int.toText(Prim.nat8ToNat(item));
         };
 
-        json # "]";
+        return json # "]";
+      };
+    };
+  };
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public func candySharedToJson(candy: Candy.CandyShared): Text {
+    return switch(candy) {
+      case (#Text(value)) "\"" # escapeJson(value) # "\"";
+      case (#Principal(value)) "\"" # Principal.toText(value) # "\"";
+      case (#Bool(value)) Bool.toText(value);
+      case (#Int(value)) Int.toText(value);
+      case (#Int8(value)) Int.toText(Prim.int8ToInt(value));
+      case (#Int16(value)) Int.toText(Prim.int16ToInt(value));
+      case (#Int32(value)) Int.toText(Prim.int32ToInt(value));
+      case (#Int64(value)) Int.toText(Prim.int64ToInt(value));
+      case (#Nat(value)) Int.toText(value);
+      case (#Nat8(value)) Int.toText(Prim.nat8ToNat(value));
+      case (#Nat16(value)) Int.toText(Prim.nat16ToNat(value));
+      case (#Nat32(value)) Int.toText(Prim.nat32ToNat(value));
+      case (#Nat64(value)) Int.toText(Prim.nat64ToNat(value));
+      case (#Float(value)) Float.toText(value);
+      case (#Option(value)) switch (value) { case (?value) candySharedToJson(value); case (_) "null" };
+
+      case (#Class(props)) {
+        var json = "{";
+        var firstProp = true;
+
+        for (prop in props.vals()) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "\"" # escapeJson(prop.name) # "\":" # candySharedToJson(prop.value);
+        };
+
+        return json # "}";
+      };
+
+      case (#Map(map)) {
+        var json = "[";
+        var firstProp = true;
+
+        for ((key, value) in map.vals()) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "[" # candySharedToJson(key) # "," # candySharedToJson(value) # "]";
+        };
+
+        return json # "]";
+      };
+
+      case (#Set(set)) {
+        var json = "[";
+        var firstProp = true;
+
+        for (key in set.vals()) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= candySharedToJson(key);
+        };
+
+        return json # "]";
+      };
+
+      case (#Array(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= candySharedToJson(item);
+        };
+
+        return json # "]";
+      };
+
+      case (#Bytes(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(Prim.nat8ToNat(item));
+        };
+
+        return json # "]";
+      };
+
+      case (#Floats(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Float.toText(item);
+        };
+
+        return json # "]";
+      };
+
+      case (#Ints(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(item);
+        };
+
+        return json # "]";
+      };
+
+      case (#Nats(array)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in array.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(item);
+        };
+
+        return json # "]";
+      };
+
+      case (#Blob(value)) {
+        var json = "[";
+        var firstItem = true;
+
+        for (item in value.vals()) {
+          if (firstItem) firstItem := false else json #= ",";
+
+          json #= Int.toText(Prim.nat8ToNat(item));
+        };
+
+        return json # "]";
       };
     };
   };

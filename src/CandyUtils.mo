@@ -3,6 +3,7 @@ import GetAll "./getAll";
 import Path "./path";
 import ToJson "./toJson";
 import ToText "./toText";
+import Validate "./validate";
 
 module {
   public type Prop = Path.Prop;
@@ -17,6 +18,8 @@ module {
 
   public type Path = Path.Path;
 
+  public type Schema = Validate.Schema;
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   public let { path; escapePath } = Path;
@@ -25,7 +28,9 @@ module {
 
   public let { getAll } = GetAll;
 
-  public let { candyToJson } = ToJson;
+  public let { candyToJson; candySharedToJson } = ToJson;
 
-  public let { candyToText } = ToText;
+  public let { candyToText; candySharedToText } = ToText;
+
+  public let { validate; validateShared } = Validate;
 };

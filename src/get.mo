@@ -1,5 +1,5 @@
 import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy/types";
+import Candy "mo:candy2/types";
 import CompareCandy "./compareCandy";
 import CompareValue "./compareValue";
 import Map "mo:map/Map";

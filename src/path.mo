@@ -1,4 +1,4 @@
-import Candy "mo:candy/types";
+import Candy "mo:candy2/types";
 import Iter "mo:base/Iter";
 import Prim "mo:prim";
 import Utils "./utils";
