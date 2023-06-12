@@ -4,12 +4,51 @@ import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 
 actor Test {
-  public query func test(): async Candy.CandyShared {
-    let candy: Candy.Candy = #Class(Map.fromIter<Text, Candy.Property>([
-      ("aaa", { name = "aaa"; value = #Text("aaa"); immutable = false }),
-      ("bbb", { name = "bbb"; value = #Text("bbb"); immutable = false }),
-    ].vals(), thash));
+  public query func test(): async [Text] {
+    let candyValue1: Candy.CandyShared = #Text("John Doe");
 
-    return Candy.shareCandy(Utils.get(candy, Utils.path("aaa")));
+    let candyValue2: Candy.CandyShared = #Class([
+      { name = "name"; value = #Text("John"); immutable = true },
+      { name = "surname"; value = #Text("Doe"); immutable = true },
+      { name = "languages"; value = #Array([#Text("English"), #Text("German"), #Text("Russian")]); immutable = true },
+      {
+        name = "organization";
+        value = #Class([
+          { name = "name"; value = #Text("ABC"); immutable = true },
+          { name = "typeOfActivity"; value = #Text("Programming"); immutable = true },
+        ]);
+        immutable = true;
+      },
+    ]);
+
+    let schema1: Utils.Schema = #Text;
+
+    let schema2: Utils.Schema = #Class([
+      ("name", #Text),
+      ("surname", #Text),
+      ("languages", #Array(#Text)),
+      ("organization", #Class([
+        ("name", #Text),
+        ("typeOfActivity", #Text),
+      ])),
+    ]);
+
+    let schema3: Utils.Schema = #OneOf([schema1, schema2]);
+
+    let validation1 = Utils.validateShared(candyValue1, schema1); // true
+
+    let validation2 = Utils.validateShared(candyValue2, schema2); // true
+
+    let validation3 = Utils.validateShared(candyValue1, schema2); // false
+
+    let validation4 = Utils.validateShared(candyValue2, schema1); // false
+
+    let validation5 = Utils.validateShared(candyValue1, schema3); // true
+
+    let validation6 = Utils.validateShared(candyValue2, schema3); // true
+
+    return [
+      debug_show([validation1, validation2, validation3, validation4, validation5, validation6]),
+    ];
   };
 };

@@ -77,7 +77,7 @@ let candyValue2: Candy.CandyShared = #Class([
   { name = "name"; value = #Text("John"); immutable = true },
   { name = "surname"; value = #Text("Doe"); immutable = true },
   { name = "languages"; value = #Array([#Text("English"), #Text("German"), #Text("Russian")]); immutable = true },
-  { 
+  {
     name = "organization";
     value = #Class([
       { name = "name"; value = #Text("ABC"); immutable = true },
@@ -113,6 +113,12 @@ let validation5 = Utils.validateShared(candyValue1, schema3); // true
 
 let validation6 = Utils.validateShared(candyValue2, schema3); // true
 ```
+
+## Notes
+
+- Validation for immutability is not supported yet
+- Class with a broader set of properties than the schema is valid
+- Type is required for Option validation (it is currently not possible to validate that an Option is strictly null)
 
 # To JSON
 
