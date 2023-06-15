@@ -27,8 +27,8 @@ actor Test {
       ("name", #Text),
       ("surname", #Text),
       ("languages", #Array(#Text)),
-      ("organization", #Class([
-        ("name", #Text),
+      ("organization", #StrictClass([
+        ("name", #Immutable(#Text)),
         ("typeOfActivity", #Text),
       ])),
     ]);

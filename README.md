@@ -93,8 +93,8 @@ let schema2: Utils.Schema = #Class([
   ("name", #Text),
   ("surname", #Text),
   ("languages", #Array(#Text)),
-  ("organization", #Class([
-    ("name", #Text),
+  ("organization", #StrictClass([
+    ("name", #Immutable(#Text)),
     ("typeOfActivity", #Text),
   ])),
 ]);
@@ -113,12 +113,6 @@ let validation5 = Utils.validateShared(candyValue1, schema3); // true
 
 let validation6 = Utils.validateShared(candyValue2, schema3); // true
 ```
-
-## Notes
-
-- Validation for immutability is not supported yet
-- Class with a broader set of properties than the schema is valid
-- Type is required for Option validation (it is currently not possible to validate that an Option is strictly null)
 
 # To JSON
 

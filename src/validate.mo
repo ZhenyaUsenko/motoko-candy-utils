@@ -1,5 +1,6 @@
 import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
+import Debug "mo:base/Debug";
 import Map "mo:map/Map";
 import Set "mo:map/Set";
 import { thash } "mo:map/Map";
@@ -25,8 +26,11 @@ module {
     #Floats;
     #Ints;
     #Nats;
+    #Mutable: Schema;
+    #Immutable: Schema;
     #Option: Schema;
     #Class: [(Text, Schema)];
+    #StrictClass: [(Text, Schema)];
     #Map: (Schema, Schema);
     #Set: Schema;
     #Array: Schema;
@@ -56,6 +60,8 @@ module {
       case (#Floats) switch (candy) { case (#Floats(_)) true; case (_) false };
       case (#Ints) switch (candy) { case (#Ints(_)) true; case (_) false };
       case (#Nats) switch (candy) { case (#Nats(_)) true; case (_) false };
+      case (#Mutable(_)) Debug.trap("#Mutable variant can only be used for class properties");
+      case (#Immutable(_)) Debug.trap("#Immutable variant can only be used for class properties");
 
       case (#Option(optionSchema)) switch (candy) {
         case (#Option(?value)) return validate(value, optionSchema);
@@ -65,9 +71,54 @@ module {
 
       case (#Class(classSchema)) switch (candy) {
         case (#Class(props)) {
+          if (Map.size(props) < classSchema.size()) return false;
+
           for ((keySchema, valueSchema) in classSchema.vals()) {
             switch (Map.get(props, thash, keySchema)) {
-              case (?value) if (not validate(value.value, valueSchema)) return false;
+              case (?prop) switch (valueSchema) {
+                case (#Mutable(valueSchema)) {
+                  if (prop.immutable or not validate(prop.value, valueSchema)) return false;
+                };
+
+                case (#Immutable(valueSchema)) {
+                  if (not prop.immutable or not validate(prop.value, valueSchema)) return false;
+                };
+
+                case (_) {
+                  if (not validate(prop.value, valueSchema)) return false;
+                };
+              };
+
+              case (_) return false;
+            };
+          };
+
+          return true;
+        };
+
+        case (_) return false;
+      };
+
+      case (#StrictClass(classSchema)) switch (candy) {
+        case (#Class(props)) {
+          if (Map.size(props) != classSchema.size()) return false;
+
+          for ((keySchema, valueSchema) in classSchema.vals()) {
+            switch (Map.get(props, thash, keySchema)) {
+              case (?prop) switch (valueSchema) {
+                case (#Mutable(valueSchema)) {
+                  if (prop.immutable or not validate(prop.value, valueSchema)) return false;
+                };
+
+                case (#Immutable(valueSchema)) {
+                  if (not prop.immutable or not validate(prop.value, valueSchema)) return false;
+                };
+
+                case (_) {
+                  if (not validate(prop.value, valueSchema)) return false;
+                };
+              };
+
               case (_) return false;
             };
           };
@@ -147,6 +198,8 @@ module {
       case (#Floats) switch (candy) { case (#Floats(_)) true; case (_) false };
       case (#Ints) switch (candy) { case (#Ints(_)) true; case (_) false };
       case (#Nats) switch (candy) { case (#Nats(_)) true; case (_) false };
+      case (#Mutable(_)) Debug.trap("#Mutable variant can only be used for class properties");
+      case (#Immutable(_)) Debug.trap("#Immutable variant can only be used for class properties");
 
       case (#Option(optionSchema)) switch (candy) {
         case (#Option(?value)) return validateShared(value, optionSchema);
@@ -156,10 +209,60 @@ module {
 
       case (#Class(classSchema)) switch (candy) {
         case (#Class(props)) {
+          if (props.size() < classSchema.size()) return false;
+
           for ((keySchema, valueSchema) in classSchema.vals()) label schemaPropIteration {
             for (prop in props.vals()) {
               if (prop.name == keySchema) {
-                if (not validateShared(prop.value, valueSchema)) return false else break schemaPropIteration;
+                switch (valueSchema) {
+                  case (#Mutable(valueSchema)) {
+                    if (prop.immutable or not validateShared(prop.value, valueSchema)) return false;
+                  };
+
+                  case (#Immutable(valueSchema)) {
+                    if (not prop.immutable or not validateShared(prop.value, valueSchema)) return false;
+                  };
+
+                  case (_) {
+                    if (not validateShared(prop.value, valueSchema)) return false;
+                  };
+                };
+
+                break schemaPropIteration;
+              };
+            };
+
+            return false;
+          };
+
+          return true;
+        };
+
+        case (_) return false;
+      };
+
+      case (#StrictClass(classSchema)) switch (candy) {
+        case (#Class(props)) {
+          if (props.size() != classSchema.size()) return false;
+
+          for ((keySchema, valueSchema) in classSchema.vals()) label schemaPropIteration {
+            for (prop in props.vals()) {
+              if (prop.name == keySchema) {
+                switch (valueSchema) {
+                  case (#Mutable(valueSchema)) {
+                    if (prop.immutable or not validateShared(prop.value, valueSchema)) return false;
+                  };
+
+                  case (#Immutable(valueSchema)) {
+                    if (not prop.immutable or not validateShared(prop.value, valueSchema)) return false;
+                  };
+
+                  case (_) {
+                    if (not validateShared(prop.value, valueSchema)) return false;
+                  };
+                };
+
+                break schemaPropIteration;
               };
             };
 
