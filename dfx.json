@@ -1,10 +1,15 @@
 {
   "canisters": {
     "test": {
-      "build": "build.sh test test.mo",
-      "candid": ".dfx/local/canisters/test/test.did",
-      "type": "custom",
-      "wasm": ".dfx/local/canisters/test/test.wasm.gz"
+      "main": "test.mo",
+      "type": "motoko",
+      "optimize": "cycles",
+      "gzip": true
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "vessel sources"
     }
   }
 }

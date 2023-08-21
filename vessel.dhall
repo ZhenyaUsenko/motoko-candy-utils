@@ -5,5 +5,5 @@
     "stablebuffer",
     "map",
   ],
-  compiler = Some "0.9.1",
+  compiler = Some "0.9.8",
 }
