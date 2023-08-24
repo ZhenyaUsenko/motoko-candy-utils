@@ -2,11 +2,11 @@ import Array "mo:base/Array";
 import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
 import Get "./get";
-import Map "mo:map/Map";
+import Map "mo:map7/Map";
 import Path "./path";
 import Prim "mo:prim";
 import { abs; clzNat32; nat32ToNat } "mo:prim";
-import { thash } "mo:map/Map";
+import { thash } "mo:map7/Map";
 
 module {
   type Candies = (

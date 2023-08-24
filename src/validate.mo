@@ -1,9 +1,9 @@
 import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
 import Debug "mo:base/Debug";
-import Map "mo:map/Map";
-import Set "mo:map/Set";
-import { thash } "mo:map/Map";
+import Map "mo:map7/Map";
+import Set "mo:map7/Set";
+import { thash } "mo:map7/Map";
 
 module {
   public type Schema = {

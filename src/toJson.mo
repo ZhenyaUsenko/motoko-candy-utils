@@ -4,10 +4,10 @@ import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
 import Float "mo:base/Float";
 import Int "mo:base/Int";
-import Map "mo:map/Map";
+import Map "mo:map7/Map";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
-import Set "mo:map/Set";
+import Set "mo:map7/Set";
 import Text "mo:base/Text";
 
 module {

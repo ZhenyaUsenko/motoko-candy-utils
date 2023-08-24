@@ -2,10 +2,10 @@ import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
 import CompareCandy "./compareCandy";
 import CompareValue "./compareValue";
-import Map "mo:map/Map";
+import Map "mo:map7/Map";
 import Path "./path";
 import { abs } "mo:prim";
-import { thash } "mo:map/Map";
+import { thash } "mo:map7/Map";
 
 module {
   public func getProp(root: Candy.Candy, candy: Candy.Candy, prop: Path.Prop): Candy.Candy {
