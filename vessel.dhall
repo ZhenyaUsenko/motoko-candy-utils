@@ -3,7 +3,7 @@
     "base",
     "candy2",
     "stablebuffer",
-    "map",
+    "map7",
   ],
   compiler = Some "0.9.8",
 }
