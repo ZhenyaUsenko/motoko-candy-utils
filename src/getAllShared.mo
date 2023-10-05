@@ -1,25 +1,22 @@
 import Array "mo:base/Array";
-import Buffer "mo:stablebuffer/StableBuffer";
 import Candy "mo:candy2/types";
-import Get "./get";
-import Map "mo:map7/Map";
+import GetShared "./getShared";
 import Path "./path";
 import { abs; clzNat32; nat32ToNat } "mo:prim";
-import { thash } "mo:map7/Map";
 
 module {
-  type Candies = (
+  type CandiesShared = (
     id: Nat32,
-    data: [var Candy.Candy],
+    data: [var Candy.CandyShared],
     capacity: Nat32,
     size: Nat32,
   );
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func growCandies(candies: Candies, size: Nat32): Candies {
+  public func growCandies(candies: CandiesShared, size: Nat32): CandiesShared {
     let newCapacity = 2 **% (33 -% clzNat32(size));
-    let newCandies = Array.init<Candy.Candy>(nat32ToNat(newCapacity), #Option(null));
+    let newCandies = Array.init<Candy.CandyShared>(nat32ToNat(newCapacity), #Option(null));
 
     for (index in candies.1.keys()) newCandies[index] := candies.1[index];
 
@@ -28,80 +25,80 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func getAllProps(root: Candy.Candy, candies: Candies, prop: Path.Prop): Candies {
+  public func getAllProps(root: Candy.CandyShared, candies: CandiesShared, prop: Path.Prop): CandiesShared {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
 
     for (candy in candies.1.vals()) {
       switch (candy) {
-        case (#Class(data)) switch (Map.get(data, thash, prop.0)) {
-          case (?item) {
+        case (#Class(data)) {
+          label propertySearch for (item in data.vals()) if (item.name == prop.0) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := item.value;
             size +%= 1;
-          };
 
-          case (_) {};
+            break propertySearch;
+          };
         };
 
         case (#Array(array)) if (prop.2) {
-          let arraySize = Buffer.size(array);
+          let arraySize = array.size();
           let index = if (prop.1 < 0) arraySize + prop.1 else prop.1;
 
           if (index >= 0 and index < arraySize) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
-            newCandies.1[nat32ToNat(size)] := Buffer.get(array, abs(prop.1));
+            newCandies.1[nat32ToNat(size)] := array[abs(prop.1)];
             size +%= 1;
           };
         };
 
         case (#Bytes(array)) if (prop.2) {
-          let arraySize = Buffer.size(array);
+          let arraySize = array.size();
           let index = if (prop.1 < 0) arraySize + prop.1 else prop.1;
 
           if (index >= 0 and index < arraySize) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
-            newCandies.1[nat32ToNat(size)] := #Nat8(Buffer.get(array, abs(prop.1)));
+            newCandies.1[nat32ToNat(size)] := #Nat8(array[abs(prop.1)]);
             size +%= 1;
           };
         };
 
         case (#Floats(array)) if (prop.2) {
-          let arraySize = Buffer.size(array);
+          let arraySize = array.size();
           let index = if (prop.1 < 0) arraySize + prop.1 else prop.1;
 
           if (index >= 0 and index < arraySize) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
-            newCandies.1[nat32ToNat(size)] := #Float(Buffer.get(array, abs(prop.1)));
+            newCandies.1[nat32ToNat(size)] := #Float(array[abs(prop.1)]);
             size +%= 1;
           };
         };
 
         case (#Ints(array)) if (prop.2) {
-          let arraySize = Buffer.size(array);
+          let arraySize = array.size();
           let index = if (prop.1 < 0) arraySize + prop.1 else prop.1;
 
           if (index >= 0 and index < arraySize) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
-            newCandies.1[nat32ToNat(size)] := #Int(Buffer.get(array, abs(prop.1)));
+            newCandies.1[nat32ToNat(size)] := #Int(array[abs(prop.1)]);
             size +%= 1;
           };
         };
 
         case (#Nats(array)) if (prop.2) {
-          let arraySize = Buffer.size(array);
+          let arraySize = array.size();
           let index = if (prop.1 < 0) arraySize + prop.1 else prop.1;
 
           if (index >= 0 and index < arraySize) {
             if (size >= newCandies.2) newCandies := growCandies(newCandies, size);
 
-            newCandies.1[nat32ToNat(size)] := #Nat(Buffer.get(array, abs(prop.1)));
+            newCandies.1[nat32ToNat(size)] := #Nat(array[abs(prop.1)]);
             size +%= 1;
           };
         };
@@ -117,7 +114,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func arrayGetAll(root: Candy.Candy, candies: Candies): Candies {
+  public func arrayGetAll(root: Candy.CandyShared, candies: CandiesShared): CandiesShared {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -125,7 +122,7 @@ module {
     for (candy in candies.1.vals()) {
       switch (candy) {
         case (#Array(array)) {
-          for (item in Buffer.vals(array)) {
+          for (item in array.vals()) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := item;
@@ -134,7 +131,7 @@ module {
         };
 
         case (#Bytes(array)) {
-          for (item in Buffer.vals(array)) {
+          for (item in array.vals()) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Nat8(item);
@@ -143,7 +140,7 @@ module {
         };
 
         case (#Floats(array)) {
-          for (item in Buffer.vals(array)) {
+          for (item in array.vals()) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Float(item);
@@ -152,7 +149,7 @@ module {
         };
 
         case (#Ints(array)) {
-          for (item in Buffer.vals(array)) {
+          for (item in array.vals()) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Int(item);
@@ -161,7 +158,7 @@ module {
         };
 
         case (#Nats(array)) {
-          for (item in Buffer.vals(array)) {
+          for (item in array.vals()) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Nat(item);
@@ -180,7 +177,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func find(root: Candy.Candy, candies: Candies, condition: Path.Condition): Candies {
+  public func find(root: Candy.CandyShared, candies: CandiesShared, condition: Path.Condition): CandiesShared {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -188,7 +185,7 @@ module {
     for (candy in candies.1.vals()) {
       switch (candy) {
         case (#Array(array)) {
-          for (item in Buffer.vals(array)) if (Get.checkCondition(root, candy, condition)) {
+          for (item in array.vals()) if (GetShared.checkCondition(root, candy, condition)) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := item;
@@ -197,7 +194,7 @@ module {
         };
 
         case (#Bytes(array)) {
-          for (item in Buffer.vals(array)) if (Get.checkCondition(root, candy, condition)) {
+          for (item in array.vals()) if (GetShared.checkCondition(root, candy, condition)) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Nat8(item);
@@ -206,7 +203,7 @@ module {
         };
 
         case (#Floats(array)) {
-          for (item in Buffer.vals(array)) if (Get.checkCondition(root, candy, condition)) {
+          for (item in array.vals()) if (GetShared.checkCondition(root, candy, condition)) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Float(item);
@@ -215,7 +212,7 @@ module {
         };
 
         case (#Ints(array)) {
-          for (item in Buffer.vals(array)) if (Get.checkCondition(root, candy, condition)) {
+          for (item in array.vals()) if (GetShared.checkCondition(root, candy, condition)) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Int(item);
@@ -224,7 +221,7 @@ module {
         };
 
         case (#Nats(array)) {
-          for (item in Buffer.vals(array)) if (Get.checkCondition(root, candy, condition)) {
+          for (item in array.vals()) if (GetShared.checkCondition(root, candy, condition)) {
             if (size >= newCandies.2 or (newCandies.0 != candies.0 and size > index)) newCandies := growCandies(newCandies, size);
 
             newCandies.1[nat32ToNat(size)] := #Nat(item);
@@ -243,13 +240,13 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func pathGet(root: Candy.Candy, candy: Candy.Candy, path: Path.Path): [Candy.Candy] {
-    var result = (1, [var candy, #Option(null), #Option(null), #Option(null)], 4, 1):Candies;
+  public func pathGet(root: Candy.CandyShared, candy: Candy.CandyShared, path: Path.Path): [Candy.CandyShared] {
+    var result = (1, [var candy, #Option(null), #Option(null), #Option(null)], 4, 1):CandiesShared;
     var currentProp = path;
 
     label pathLoop loop {
       switch (currentProp.0) {
-        case (#ROOT) result := (1, [var root, #Option(null), #Option(null), #Option(null)], 4, 1):Candies;
+        case (#ROOT) result := (1, [var root, #Option(null), #Option(null), #Option(null)], 4, 1):CandiesShared;
         case (#ALL) result := arrayGetAll(root, result);
         case (#PROP(prop)) result := getAllProps(root, result, prop);
         case (#CONDITION(condition)) result := find(root, result, condition);
@@ -259,15 +256,15 @@ module {
       switch (currentProp.1) { case (?prop) currentProp := prop; case (_) break pathLoop };
     };
 
-    return Array.tabulate<Candy.Candy>(nat32ToNat(result.3), func(i) = result.1[i]);
+    return Array.tabulate<Candy.CandyShared>(nat32ToNat(result.3), func(i) = result.1[i]);
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func getAll(candy: Candy.Candy, path: ?Path.Path): [Candy.Candy] {
+  public func getAllShared(candy: Candy.CandyShared, path: ?Path.Path): [Candy.CandyShared] {
     return switch (path) {
       case (?path) switch (path.0) {
-        case (#CONDITION(condition)) [#Bool(Get.checkCondition(candy, candy, condition))];
+        case (#CONDITION(condition)) [#Bool(GetShared.checkCondition(candy, candy, condition))];
         case (_) pathGet(candy, candy, path);
       };
 

@@ -26,6 +26,7 @@ module {
     #Floats;
     #Ints;
     #Nats;
+    #Any;
     #Mutable: Schema;
     #Immutable: Schema;
     #Option: Schema;
@@ -60,6 +61,7 @@ module {
       case (#Floats) switch (candy) { case (#Floats(_)) true; case (_) false };
       case (#Ints) switch (candy) { case (#Ints(_)) true; case (_) false };
       case (#Nats) switch (candy) { case (#Nats(_)) true; case (_) false };
+      case (#Any) true;
       case (#Mutable(_)) Debug.trap("#Mutable variant can only be used for class properties");
       case (#Immutable(_)) Debug.trap("#Immutable variant can only be used for class properties");
 
@@ -198,6 +200,7 @@ module {
       case (#Floats) switch (candy) { case (#Floats(_)) true; case (_) false };
       case (#Ints) switch (candy) { case (#Ints(_)) true; case (_) false };
       case (#Nats) switch (candy) { case (#Nats(_)) true; case (_) false };
+      case (#Any) true;
       case (#Mutable(_)) Debug.trap("#Mutable variant can only be used for class properties");
       case (#Immutable(_)) Debug.trap("#Immutable variant can only be used for class properties");
 

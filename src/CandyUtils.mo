@@ -1,5 +1,7 @@
 import Get "./get";
+import GetShared "./getShared";
 import GetAll "./getAll";
+import GetAllShared "./getAllShared";
 import Path "./path";
 import ToJson "./toJson";
 import ToText "./toText";
@@ -26,11 +28,15 @@ module {
 
   public let { get } = Get;
 
+  public let { getShared } = GetShared;
+
   public let { getAll } = GetAll;
 
-  public let { candyToJson; candySharedToJson } = ToJson;
+  public let { getAllShared } = GetAllShared;
 
-  public let { candyToText; candySharedToText } = ToText;
+  public let { toJson; toJsonShared } = ToJson;
+
+  public let { toText; toTextShared } = ToText;
 
   public let { validate; validateShared } = Validate;
 };

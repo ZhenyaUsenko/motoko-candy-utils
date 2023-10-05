@@ -6,7 +6,7 @@ import Prim "mo:prim";
 import Principal "mo:base/Principal";
 
 module {
-  public func candyToText(candy: Candy.Candy): ?Text {
+  public func toText(candy: Candy.Candy): ?Text {
     return switch(candy) {
       case (#Text(value)) ?value;
       case (#Principal(value)) ?Principal.toText(value);
@@ -23,14 +23,14 @@ module {
       case (#Nat32(value)) ?Int.toText(Prim.nat32ToNat(value));
       case (#Nat64(value)) ?Int.toText(Prim.nat64ToNat(value));
       case (#Float(value)) ?Float.toText(value);
-      case (#Option(value)) switch (value) { case (?value) candyToText(value); case (_) null };
+      case (#Option(value)) switch (value) { case (?value) toText(value); case (_) null };
       case (_) null;
     };
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func candySharedToText(candy: Candy.CandyShared): ?Text {
+  public func toTextShared(candy: Candy.CandyShared): ?Text {
     return switch(candy) {
       case (#Text(value)) ?value;
       case (#Principal(value)) ?Principal.toText(value);
@@ -47,7 +47,7 @@ module {
       case (#Nat32(value)) ?Int.toText(Prim.nat32ToNat(value));
       case (#Nat64(value)) ?Int.toText(Prim.nat64ToNat(value));
       case (#Float(value)) ?Float.toText(value);
-      case (#Option(value)) switch (value) { case (?value) candySharedToText(value); case (_) null };
+      case (#Option(value)) switch (value) { case (?value) toTextShared(value); case (_) null };
       case (_) null;
     };
   };

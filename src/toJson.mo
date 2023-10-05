@@ -38,7 +38,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func candyToJson(candy: Candy.Candy): Text {
+  public func toJson(candy: Candy.Candy): Text {
     return switch(candy) {
       case (#Text(value)) "\"" # escapeJson(value) # "\"";
       case (#Principal(value)) "\"" # Principal.toText(value) # "\"";
@@ -54,7 +54,7 @@ module {
       case (#Nat32(value)) Int.toText(Prim.nat32ToNat(value));
       case (#Nat64(value)) Int.toText(Prim.nat64ToNat(value));
       case (#Float(value)) Float.toText(value);
-      case (#Option(value)) switch (value) { case (?value) candyToJson(value); case (_) "null" };
+      case (#Option(value)) switch (value) { case (?value) toJson(value); case (_) "null" };
 
       case (#Class(props)) {
         var json = "{";
@@ -63,7 +63,7 @@ module {
         for (prop in Map.vals(props)) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= "\"" # escapeJson(prop.name) # "\":" # candyToJson(prop.value);
+          json #= "\"" # escapeJson(prop.name) # "\":" # toJson(prop.value);
         };
 
         return json # "}";
@@ -76,7 +76,7 @@ module {
         for ((key, value) in Map.entries(map)) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= "[" # candyToJson(key) # "," # candyToJson(value) # "]";
+          json #= "[" # toJson(key) # "," # toJson(value) # "]";
         };
 
         return json # "]";
@@ -89,7 +89,7 @@ module {
         for (key in Set.keys(set)) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= candyToJson(key);
+          json #= toJson(key);
         };
 
         return json # "]";
@@ -102,7 +102,7 @@ module {
         for (item in Buffer.vals(array)) {
           if (firstItem) firstItem := false else json #= ",";
 
-          json #= candyToJson(item);
+          json #= toJson(item);
         };
 
         return json # "]";
@@ -177,7 +177,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func candySharedToJson(candy: Candy.CandyShared): Text {
+  public func toJsonShared(candy: Candy.CandyShared): Text {
     return switch(candy) {
       case (#Text(value)) "\"" # escapeJson(value) # "\"";
       case (#Principal(value)) "\"" # Principal.toText(value) # "\"";
@@ -193,7 +193,7 @@ module {
       case (#Nat32(value)) Int.toText(Prim.nat32ToNat(value));
       case (#Nat64(value)) Int.toText(Prim.nat64ToNat(value));
       case (#Float(value)) Float.toText(value);
-      case (#Option(value)) switch (value) { case (?value) candySharedToJson(value); case (_) "null" };
+      case (#Option(value)) switch (value) { case (?value) toJsonShared(value); case (_) "null" };
 
       case (#Class(props)) {
         var json = "{";
@@ -202,7 +202,7 @@ module {
         for (prop in props.vals()) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= "\"" # escapeJson(prop.name) # "\":" # candySharedToJson(prop.value);
+          json #= "\"" # escapeJson(prop.name) # "\":" # toJsonShared(prop.value);
         };
 
         return json # "}";
@@ -215,7 +215,7 @@ module {
         for ((key, value) in map.vals()) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= "[" # candySharedToJson(key) # "," # candySharedToJson(value) # "]";
+          json #= "[" # toJsonShared(key) # "," # toJsonShared(value) # "]";
         };
 
         return json # "]";
@@ -228,7 +228,7 @@ module {
         for (key in set.vals()) {
           if (firstProp) firstProp := false else json #= ",";
 
-          json #= candySharedToJson(key);
+          json #= toJsonShared(key);
         };
 
         return json # "]";
@@ -241,7 +241,7 @@ module {
         for (item in array.vals()) {
           if (firstItem) firstItem := false else json #= ",";
 
-          json #= candySharedToJson(item);
+          json #= toJsonShared(item);
         };
 
         return json # "]";

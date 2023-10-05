@@ -38,24 +38,23 @@
 
 ```ts
 import Utils "mo:candy_utils/CandyUtils";
-
-let { get; getAll; path } = Utils;
+import { get; getShared; getAll; getAllShared; path } "mo:candy_utils/CandyUtils";
 
 let candy = #Option(null); // our big candy structure here with nested arrays and objects
 
-let candy1 = get(candy, path("books.0.author.name"));
+let candy1 = Utils.get(candy, path("books.0.author.name"));
 
-let candy2 = get(candy, path("books.-2.author.name"));
+let candy2 = Utils.get(candy, path("books.-2.author.name"));
 
-let candy3 = get(candy, path("books[author.name ~= John].author.name"));
+let candy3 = Utils.get(candy, path("books[author.name ~= John].author.name"));
 
-let candy4 = get(candy, path("books[author.name == $.mostPopularAuthor].pageNumber")));
+let candy4 = Utils.get(candy, path("books[author.name == $.mostPopularAuthor].pageNumber")));
 
-let candy5 = get(candy, path("books[author.name == $.mostPopularAuthor | pageNumber < @.numberOfPurchases].pageNumber"));
+let candy5 = Utils.get(candy, path("books[author.name == $.mostPopularAuthor | pageNumber < @.numberOfPurchases].pageNumber"));
 
-let candy6 = get(candy, path("books.0.author.name == John"));
+let candy6 = Utils.get(candy, path("books.0.author.name == John"));
 
-let candy7 = getAll(candy, path("books.*.author.name"));
+let candy7 = Utils.getAll(candy, path("books.*.author.name"));
 ```
 
 ## Roadmap
