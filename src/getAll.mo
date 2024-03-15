@@ -1,11 +1,11 @@
 import Array "mo:base/Array";
-import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy2/types";
+import Buffer "mo:stablebuffer_1_3_0/StableBuffer";
+import Candy "mo:candy3/types";
 import Get "./get";
-import Map "mo:map7/Map";
+import Map "mo:map9/Map";
 import Path "./path";
 import { abs; clzNat32; nat32ToNat } "mo:prim";
-import { thash } "mo:map7/Map";
+import { thash } "mo:map9/Map";
 
 module {
   type Candies = (
@@ -28,7 +28,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func getAllProps(root: Candy.Candy, candies: Candies, prop: Path.Prop): Candies {
+  public func getAllProps(candies: Candies, prop: Path.Prop): Candies {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -117,7 +117,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func arrayGetAll(root: Candy.Candy, candies: Candies): Candies {
+  public func arrayGetAll(candies: Candies): Candies {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -250,8 +250,8 @@ module {
     label pathLoop loop {
       switch (currentProp.0) {
         case (#ROOT) result := (1, [var root, #Option(null), #Option(null), #Option(null)], 4, 1):Candies;
-        case (#ALL) result := arrayGetAll(root, result);
-        case (#PROP(prop)) result := getAllProps(root, result, prop);
+        case (#ALL) result := arrayGetAll(result);
+        case (#PROP(prop)) result := getAllProps(result, prop);
         case (#CONDITION(condition)) result := find(root, result, condition);
         case (_) {};
       };

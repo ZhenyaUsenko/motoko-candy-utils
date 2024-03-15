@@ -1,5 +1,5 @@
 import Array "mo:base/Array";
-import Candy "mo:candy2/types";
+import Candy "mo:candy3/types";
 import GetShared "./getShared";
 import Path "./path";
 import { abs; clzNat32; nat32ToNat } "mo:prim";
@@ -25,7 +25,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func getAllProps(root: Candy.CandyShared, candies: CandiesShared, prop: Path.Prop): CandiesShared {
+  public func getAllProps(candies: CandiesShared, prop: Path.Prop): CandiesShared {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -114,7 +114,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func arrayGetAll(root: Candy.CandyShared, candies: CandiesShared): CandiesShared {
+  public func arrayGetAll(candies: CandiesShared): CandiesShared {
     var newCandies = candies;
     var size = 0:Nat32;
     var index = 0:Nat32;
@@ -247,8 +247,8 @@ module {
     label pathLoop loop {
       switch (currentProp.0) {
         case (#ROOT) result := (1, [var root, #Option(null), #Option(null), #Option(null)], 4, 1):CandiesShared;
-        case (#ALL) result := arrayGetAll(root, result);
-        case (#PROP(prop)) result := getAllProps(root, result, prop);
+        case (#ALL) result := arrayGetAll(result);
+        case (#PROP(prop)) result := getAllProps(result, prop);
         case (#CONDITION(condition)) result := find(root, result, condition);
         case (_) {};
       };

@@ -1,14 +1,14 @@
-import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy2/types";
+import Buffer "mo:stablebuffer_1_3_0/StableBuffer";
+import Candy "mo:candy3/types";
 import CompareCandy "./compareCandy";
 import CompareValue "./compareValue";
-import Map "mo:map7/Map";
+import Map "mo:map9/Map";
 import Path "./path";
 import { abs } "mo:prim";
-import { thash } "mo:map7/Map";
+import { thash } "mo:map9/Map";
 
 module {
-  public func getProp(root: Candy.Candy, candy: Candy.Candy, prop: Path.Prop): Candy.Candy {
+  public func getProp(candy: Candy.Candy, prop: Path.Prop): Candy.Candy {
     switch (candy) {
       case (#Class(data)) {
         switch (Map.get(data, thash, prop.0)) { case (?item) return item.value; case (_) {} };
@@ -57,7 +57,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func arrayGetAll(root: Candy.Candy, candy: Candy.Candy): Candy.Candy {
+  public func arrayGetAll(candy: Candy.Candy): Candy.Candy {
     switch (candy) {
       case (#Array(array)) if (Buffer.size(array) > 0) return Buffer.get(array, 0);
       case (#Bytes(array)) if (Buffer.size(array) > 0) return #Nat8(Buffer.get(array, 0));
@@ -79,8 +79,8 @@ module {
     label pathLoop loop {
       switch (currentProp.0) {
         case (#ROOT) result := root;
-        case (#ALL) result := arrayGetAll(root, result);
-        case (#PROP(prop)) result := getProp(root, result, prop);
+        case (#ALL) result := arrayGetAll(result);
+        case (#PROP(prop)) result := getProp(result, prop);
         case (#CONDITION(condition)) result := find(root, result, condition);
         case (_) {};
       };

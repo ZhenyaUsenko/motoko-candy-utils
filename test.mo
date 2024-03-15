@@ -1,7 +1,7 @@
-import Candy "mo:candy2/types";
+import Candy "mo:candy3/types";
 import Utils "./src/CandyUtils";
-import Map "mo:map7/Map";
-import { thash } "mo:map7/Map";
+import Map "mo:map9/Map";
+import { thash } "mo:map9/Map";
 
 actor Test {
   public query func test(): async [Text] {

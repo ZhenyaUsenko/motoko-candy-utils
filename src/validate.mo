@@ -1,9 +1,9 @@
-import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy2/types";
+import Buffer "mo:stablebuffer_1_3_0/StableBuffer";
+import Candy "mo:candy3/types";
 import Debug "mo:base/Debug";
-import Map "mo:map7/Map";
-import Set "mo:map7/Set";
-import { thash } "mo:map7/Map";
+import Map "mo:map9/Map";
+import Set "mo:map9/Set";
+import { thash } "mo:map9/Map";
 
 module {
   public type Schema = {
@@ -32,7 +32,8 @@ module {
     #Option: Schema;
     #Class: [(Text, Schema)];
     #StrictClass: [(Text, Schema)];
-    #Map: (Schema, Schema);
+    #ValueMap: (Schema, Schema);
+    #Map: Schema;
     #Set: Schema;
     #Array: Schema;
     #OneOf: [Schema];
@@ -131,10 +132,22 @@ module {
         case (_) return false;
       };
 
-      case (#Map(keySchema, valueSchema)) switch (candy) {
-        case (#Map(map)) {
+      case (#ValueMap(keySchema, valueSchema)) switch (candy) {
+        case (#ValueMap(map)) {
           for ((key, value) in Map.entries(map)) {
             if (not validate(key, keySchema) or not validate(value, valueSchema)) return false;
+          };
+
+          return true;
+        };
+
+        case (_) return false;
+      };
+
+      case (#Map(valueSchema)) switch (candy) {
+        case (#Map(map)) {
+          for ((key, value) in Map.entries(map)) {
+            if (not validate(value, valueSchema)) return false;
           };
 
           return true;
@@ -278,10 +291,22 @@ module {
         case (_) return false;
       };
 
-      case (#Map(keySchema, valueSchema)) switch (candy) {
-        case (#Map(map)) {
+      case (#ValueMap(keySchema, valueSchema)) switch (candy) {
+        case (#ValueMap(map)) {
           for ((key, value) in map.vals()) {
             if (not validateShared(key, keySchema) or not validateShared(value, valueSchema)) return false;
+          };
+
+          return true;
+        };
+
+        case (_) return false;
+      };
+
+      case (#Map(valueSchema)) switch (candy) {
+        case (#Map(map)) {
+          for ((key, value) in map.vals()) {
+            if (not validateShared(value, valueSchema)) return false;
           };
 
           return true;

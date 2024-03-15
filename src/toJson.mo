@@ -1,13 +1,13 @@
 import Array "mo:base/Array";
 import Bool "mo:base/Bool";
-import Buffer "mo:stablebuffer/StableBuffer";
-import Candy "mo:candy2/types";
+import Buffer "mo:stablebuffer_1_3_0/StableBuffer";
+import Candy "mo:candy3/types";
 import Float "mo:base/Float";
 import Int "mo:base/Int";
-import Map "mo:map7/Map";
+import Map "mo:map9/Map";
 import Prim "mo:prim";
 import Principal "mo:base/Principal";
-import Set "mo:map7/Set";
+import Set "mo:map9/Set";
 import Text "mo:base/Text";
 
 module {
@@ -69,7 +69,7 @@ module {
         return json # "}";
       };
 
-      case (#Map(map)) {
+      case (#ValueMap(map)) {
         var json = "[";
         var firstProp = true;
 
@@ -77,6 +77,19 @@ module {
           if (firstProp) firstProp := false else json #= ",";
 
           json #= "[" # toJson(key) # "," # toJson(value) # "]";
+        };
+
+        return json # "]";
+      };
+
+      case (#Map(map)) {
+        var json = "[";
+        var firstProp = true;
+
+        for ((key, value) in Map.entries(map)) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "[\"" # escapeJson(key) # "\"," # toJson(value) # "]";
         };
 
         return json # "]";
@@ -208,7 +221,7 @@ module {
         return json # "}";
       };
 
-      case (#Map(map)) {
+      case (#ValueMap(map)) {
         var json = "[";
         var firstProp = true;
 
@@ -216,6 +229,19 @@ module {
           if (firstProp) firstProp := false else json #= ",";
 
           json #= "[" # toJsonShared(key) # "," # toJsonShared(value) # "]";
+        };
+
+        return json # "]";
+      };
+
+      case (#Map(map)) {
+        var json = "[";
+        var firstProp = true;
+
+        for ((key, value) in map.vals()) {
+          if (firstProp) firstProp := false else json #= ",";
+
+          json #= "[\"" # escapeJson(key) # "\"," # toJsonShared(value) # "]";
         };
 
         return json # "]";

@@ -1,11 +1,11 @@
-import Candy "mo:candy2/types";
+import Candy "mo:candy3/types";
 import CompareCandyShared "./compareCandyShared";
 import CompareValueShared "./compareValueShared";
 import Path "./path";
 import { abs } "mo:prim";
 
 module {
-  public func getProp(root: Candy.CandyShared, candy: Candy.CandyShared, prop: Path.Prop): Candy.CandyShared {
+  public func getProp(candy: Candy.CandyShared, prop: Path.Prop): Candy.CandyShared {
     switch (candy) {
       case (#Class(data)) {
         for (item in data.vals()) if (item.name == prop.0) return item.value;
@@ -54,7 +54,7 @@ module {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public func arrayGetAll(root: Candy.CandyShared, candy: Candy.CandyShared): Candy.CandyShared {
+  public func arrayGetAll(candy: Candy.CandyShared): Candy.CandyShared {
     switch (candy) {
       case (#Array(array)) if (array.size() > 0) return array[0];
       case (#Bytes(array)) if (array.size() > 0) return #Nat8(array[0]);
@@ -76,8 +76,8 @@ module {
     label pathLoop loop {
       switch (currentProp.0) {
         case (#ROOT) result := root;
-        case (#ALL) result := arrayGetAll(root, result);
-        case (#PROP(prop)) result := getProp(root, result, prop);
+        case (#ALL) result := arrayGetAll(result);
+        case (#PROP(prop)) result := getProp(result, prop);
         case (#CONDITION(condition)) result := find(root, result, condition);
         case (_) {};
       };

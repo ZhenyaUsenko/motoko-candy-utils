@@ -1,4 +1,4 @@
-import Candy "mo:candy2/types";
+import Candy "mo:candy3/types";
 import Int "mo:base/Int";
 import Float "mo:base/Float";
 import Bool "mo:base/Bool";

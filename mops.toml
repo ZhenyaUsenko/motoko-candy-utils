@@ -1,0 +1,12 @@
+[dependencies]
+base = "https://github.com/dfinity/motoko-base#moc-0.11.0@33f43215fcc087148249adaef9b481ed2578fd7e"
+candy3 = "https://github.com/icdevs/candy_library#v0.3.0@907a4e7363aac6c6a4e114ebc73e3d3f21e138af"
+stablebuffer_1_3_0 = "https://github.com/canscale/StableBuffer#v1.3.0@acdde6bb5b939227997cebdbb8919d2e6da8691c"
+map9 = "https://github.com/ZhenyaUsenko/motoko-hash-map#v9.0.1@10b68f6ea8df5e72dfa4c07a50c8bb60a916c233"
+
+[package]
+name = "candy-utils"
+version = "0.7.0"
+description = "Candy Path and Candy Schema functionality built for the Candy library"
+repository = "https://github.com/ZhenyaUsenko/motoko-candy-utils"
+license = "MIT"
