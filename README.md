@@ -36,7 +36,7 @@
 
 ## Examples
 
-```ts
+```motoko
 import Utils "mo:candy_utils/CandyUtils";
 import { get; getShared; getAll; getAllShared; path } "mo:candy_utils/CandyUtils";
 
@@ -66,7 +66,7 @@ let candy7 = Utils.getAll(candy, path("books.*.author.name"));
 
 ## Examples
 
-```ts
+```motoko
 import Candy "mo:candy/types";
 import Utils "mo:candy_utils/CandyUtils";
 
